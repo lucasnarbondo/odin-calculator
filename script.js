@@ -1,5 +1,9 @@
 let currentOperator = '';
+let firstNumber = '';
+let secondNumber = '';
 let resetCalc=false;
+let resetScreen=false;
+let chainingOperators=false;
 
 const numberButtons = document.querySelectorAll('[data-number]')
 const operatorButtons = document.querySelectorAll('[data-operator]')
@@ -30,29 +34,36 @@ function appendNumber(number){
     if (resetCalc == true){
         clear()
     }
+    if (resetScreen) { 
+        currentOperationScreen.textContent = ''
+        resetScreen=false
+    }
     if (currentOperationScreen.textContent === '0'){
         currentOperationScreen.textContent = ''
+        chainingOperators=false;
     }
     currentOperationScreen.textContent += number;
+    chainingOperators=false;
 }
 
 
 function setOperation(operator){
     if (resetCalc == true){
-        clear()
-    }
-    if (lastOperationScreen.textContent !== '') evaluate()
+        currentOperationScreen.textContent = '0';
+    }else if (lastOperationScreen.textContent !== '' && chainingOperators==false) evaluate()
     resetCalc=false;
     currentOperator=operator;
+    firstNumber=currentOperationScreen.textContent;
     lastOperationScreen.textContent = currentOperationScreen.textContent + operator
-    currentOperationScreen.textContent = '0'
+    resetScreen = true;
+    chainingOperators=true;
 }
 
 function evaluate(){
-    if (lastOperationScreen.textContent == '' || currentOperationScreen.textContent == '') return
-   let result = operate(currentOperator,parseInt(lastOperationScreen.textContent),parseInt(currentOperationScreen.textContent))
-   currentOperationScreen.textContent = result;
-   resetCalc=true;
+   if (lastOperationScreen.textContent == '' || currentOperationScreen.textContent == '') return
+   secondNumber=currentOperationScreen.textContent;
+   currentOperationScreen.textContent = operate(currentOperator,parseInt(firstNumber),parseInt(secondNumber))
+   lastOperationScreen.textContent = ''
 }
 
 function operate (operator, a, b){
